@@ -112,6 +112,7 @@ QCString DotGraph::imgName() const
 
 std::mutex g_dotIndexListMutex;
 
+// TODO：dot文件写入
 QCString DotGraph::writeGraph(
         TextStream& t,            // output stream for the code file (html, ...)
         GraphOutputFormat gf,     // bitmap(png/svg) or ps(eps/pdf)
@@ -303,6 +304,7 @@ void DotGraph::writeGraphFooter(TextStream &t)
   t << "}\n";
 }
 
+// TODO:
 void DotGraph::computeGraph(DotNode *root,
                             GraphType gt,
                             GraphOutputFormat format,

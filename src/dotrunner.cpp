@@ -346,7 +346,7 @@ bool DotRunner::run()
   // create checksum file
   if (!m_md5Hash.isEmpty())
   {
-    QCString md5Name = getBaseNameOfOutput(m_file) + ".md5";
+    QCString md5Name = getBaseNameOfOutput(m_file) + ".md5"; // TODO
     FILE *f = Portable::fopen(md5Name,"w");
     if (f)
     {

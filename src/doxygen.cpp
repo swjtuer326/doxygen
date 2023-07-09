@@ -10355,9 +10355,18 @@ static void readDir(FileInfo *fi,
         std::string name=cfi.fileName();
         std::string path=cfi.dirPath()+"/";
         std::string fullName=path+name;
+
+        std::string relPath = cfi.dirPath();
+        const StringVector &inputList=Config_getList(INPUT);
+        for (std::string s : inputList)
+        {
+          msg("relPath:%s\n",relPath.c_str());
+          relPath = (relPath.find(s) == std::string::npos) ? relPath : relPath.substr(s.length()) ; 
+        }
+
         if (fnMap)
         {
-          auto fd = createFileDef(QCString(path),QCString(name));
+          auto fd = createFileDef(QCString(path),QCString(name),QCString(),QCString(),QCString(relPath+"/"));
           FileName *fn=0;
           if (!name.empty())
           {
@@ -10444,9 +10453,16 @@ void readFileOrDirectory(const QCString &s,
         if (killSet==0 || killSet->find(filePath)==killSet->end())
         {
           std::string name=fi.fileName();
+          std::string relPath = dirPath;
+          const StringVector &inputList=Config_getList(INPUT);
+          for (std::string s : inputList)
+          {
+            msg("relPath:%s\n",relPath.c_str());
+            relPath = (relPath.find(s) == std::string::npos) ? relPath : relPath.substr(s.length()) ; 
+          }
           if (fnMap)
           {
-            auto fd = createFileDef(QCString(dirPath+"/"),QCString(name));
+            auto fd = createFileDef(QCString(dirPath+"/"),QCString(name),QCString(),QCString(),QCString(relPath+"/"));
             if (!name.empty())
             {
               FileName *fn = fnMap->add(QCString(name),QCString(filePath));
@@ -12486,13 +12502,13 @@ void generateOutput()
     g_s.end();
   }
 
-  g_s.begin("Generating example documentation...\n");
-  generateExampleDocs();
-  g_s.end();
+  // g_s.begin("Generating example documentation...\n");
+  // generateExampleDocs();
+  // g_s.end();
 
-  warn_flush();
+  // warn_flush();
 
-  g_s.begin("Generating file sources...\n");
+  g_s.begin("c\n");
   generateFileSources();
   g_s.end();
 
@@ -12500,13 +12516,13 @@ void generateOutput()
   generateFileDocs();
   g_s.end();
 
-  g_s.begin("Generating page documentation...\n");
-  generatePageDocs();
-  g_s.end();
+  // g_s.begin("Generating page documentation...\n");
+  // generatePageDocs();
+  // g_s.end();
 
-  g_s.begin("Generating group documentation...\n");
-  generateGroupDocs();
-  g_s.end();
+  // g_s.begin("Generating group documentation...\n");
+  // generateGroupDocs();
+  // g_s.end();
 
   g_s.begin("Generating class documentation...\n");
   generateClassDocs();

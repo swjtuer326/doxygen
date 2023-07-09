@@ -132,7 +132,7 @@ class DotNode
     QCString         m_label;                //!< label text
     QCString         m_tooltip;              //!< node's tooltip
     QCString         m_url;                  //!< url of the node (format: remote$local)
-    DotNodeRefVector m_parents;              //!< list of parent nodes (incoming arrows)
+    DotNodeRefVector m_parents;              //!< list of parent nodes (incoming arrows) 重要
     DotNodeRefVector m_children;             //!< list of child nodes (outgoing arrows)
     EdgeInfoVector   m_edgeInfo;             //!< edge info for each child
     bool             m_deleted    = false;   //!< used to mark a node as deleted

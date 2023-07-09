@@ -3664,7 +3664,7 @@ void writeGraphInfo(OutputList &ol)
   ol.disableAllBut(OutputType::Html);
 
   DotLegendGraph gd;
-  gd.writeGraph(Config_getString(HTML_OUTPUT));
+  gd.writeGraph(Config_getString(HTML_OUTPUT)); // dot文件保存路径
 
   bool oldStripCommentsState = Config_getBool(STRIP_CODE_COMMENTS);
   bool oldCreateSubdirs = Config_getBool(CREATE_SUBDIRS);

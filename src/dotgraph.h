@@ -74,7 +74,7 @@ class DotGraph
     virtual void computeTheGraph() = 0;
 
     QCString absBaseName() const { return m_absPath + m_baseName; }
-    QCString absDotName()  const { return m_absPath + m_baseName + ".dot"; }
+    QCString absDotName()  const { return m_absPath + m_baseName + ".dot"; } // TODO:
     QCString imgName()     const;
     QCString absImgName()  const { return m_absPath + imgName(); }
     QCString relImgName()  const { return m_relPath + imgName(); }

@@ -59,7 +59,7 @@ using IncludeInfoMap = std::unordered_map<std::string, const IncludeInfo *>;
 class FileDefImpl : public DefinitionMixin<FileDef>
 {
   public:
-    FileDefImpl(const QCString &p,const QCString &n,const QCString &ref=QCString(),const QCString &dn=QCString());
+    FileDefImpl(const QCString &p,const QCString &n,const QCString &ref=QCString(),const QCString &dn=QCString(),const QCString &rp = QCString());
     virtual ~FileDefImpl();
 
     virtual DefType definitionType() const { return TypeFile; }
@@ -75,12 +75,14 @@ class FileDefImpl : public DefinitionMixin<FileDef>
     virtual QCString includeDependencyGraphFileName() const;
     virtual QCString includedByDependencyGraphFileName() const;
     virtual QCString absFilePath() const { return m_filePath; }
+    virtual QCString relFilePath() const { return m_relFilePath; }
     virtual const QCString &docName() const { return m_docname; }
     virtual bool isSource() const { return m_isSource; }
     virtual bool isDocumentationFile() const;
     virtual const Definition *getSourceDefinition(int lineNr) const;
     virtual const MemberDef *getSourceMember(int lineNr) const;
     virtual QCString getPath() const { return m_path; }
+    virtual QCString getRelPath() const { return m_relPath; }
     virtual QCString getVersion() const { return m_fileVersion; }
     virtual bool isLinkableInProject() const;
     virtual bool isLinkable() const { return isLinkableInProject() || isReference(); }
@@ -167,7 +169,9 @@ class FileDefImpl : public DefinitionMixin<FileDef>
     LinkedRefMap<NamespaceDef> m_usingDirList;
     LinkedRefMap<ClassDef> m_usingDeclList;
     QCString              m_path;
+    QCString              m_relPath;
     QCString              m_filePath;
+    QCString              m_relFilePath;
     QCString              m_inclDepFileName;
     QCString              m_inclByDepFileName;
     QCString              m_outputDiskName;
@@ -190,24 +194,26 @@ class FileDefImpl : public DefinitionMixin<FileDef>
     bool                  m_subGrouping;
 };
 
-std::unique_ptr<FileDef> createFileDef(const QCString &p,const QCString &n,const QCString &ref,const QCString &dn)
+std::unique_ptr<FileDef> createFileDef(const QCString &p,const QCString &n,const QCString &ref,const QCString &dn,const QCString &rp)
 {
-  return std::make_unique<FileDefImpl>(p,n,ref,dn);
+  return std::make_unique<FileDefImpl>(p,n,ref,dn,rp);
 }
 
 
 //---------------------------------------------------------------------------
 
 /*! create a new file definition, where \a p is the file path,
-    \a nm the file name, and \a lref is an HTML anchor name if the
+    \a nm the file name, \a rp is the relative path and \a lref is an HTML anchor name if the
     file was read from a tag file or 0 otherwise
 */
 FileDefImpl::FileDefImpl(const QCString &p,const QCString &nm,
-                 const QCString &lref,const QCString &dn)
+                 const QCString &lref,const QCString &dn,const QCString &rp)
    : DefinitionMixin(QCString(p)+nm,1,1,nm,0,0,!p.isEmpty())
 {
   m_path=p;
+  m_relPath=rp;
   m_filePath=m_path+nm;
+  m_relFilePath=m_relPath+nm;
   m_fileName=nm;
   setReference(lref);
   setDiskName(!dn.isEmpty() ? dn : nm);

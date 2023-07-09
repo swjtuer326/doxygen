@@ -98,6 +98,9 @@ class FileDef : public DefinitionMutable, public Definition
     /*! Returns the absolute path including the file name. */
     virtual QCString absFilePath() const = 0;
 
+    /*! Returns the relative path including the file name. */
+    virtual QCString relFilePath() const = 0;
+
     /*! Returns the name as it is used in the documentation */
     virtual const QCString &docName() const = 0;
 
@@ -111,6 +114,10 @@ class FileDef : public DefinitionMutable, public Definition
 
     /*! Returns the absolute path of this file. */
     virtual QCString getPath() const = 0;
+
+    /*! Returns the relative path of this file. */
+    virtual QCString getRelPath() const = 0;
+
 
     /*! Returns version of this file. */
     virtual QCString getVersion() const = 0;
@@ -190,7 +197,7 @@ class FileDef : public DefinitionMutable, public Definition
     virtual void addListReferences() = 0;
 };
 
-std::unique_ptr<FileDef> createFileDef(const QCString &p,const QCString &n,const QCString &ref=QCString(),const QCString &dn=QCString());
+std::unique_ptr<FileDef> createFileDef(const QCString &p,const QCString &n,const QCString &ref=QCString(),const QCString &dn=QCString(),const QCString &rp=QCString());
 
 
 // --- Cast functions

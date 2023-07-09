@@ -49,19 +49,29 @@ void DotCallGraph::buildGraph(DotNode *n,const MemberDef *md,int distance)
       else
       {
         QCString name;
+        QCString codeFragment;
+        int startLine = rmd->getStartBodyLine();
+        int endLine   = rmd->getEndBodyLine();
+        readCodeFragment(rmd->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
+
+
         if (Config_getBool(HIDE_SCOPE_NAMES))
         {
           name  = rmd->getOuterScope()==m_scope ?
             rmd->name() : rmd->qualifiedName();
+          name = substitute(rmd->getFileDef()->relFilePath(), '.', '{') + "#" + name;
         }
         else
         {
-          name = rmd->qualifiedName();
+          name = substitute(rmd->getFileDef()->relFilePath(), '.', '{') + "#" + rmd->qualifiedName();
         }
+        name = name + "+" + std::to_string(startLine) + ":" + std::to_string(endLine);
+
+        
         QCString tooltip = rmd->briefDescriptionAsTooltip();
         DotNode *bn = new DotNode(
             this,
-            linkToText(rmd->getLanguage(),name,FALSE),
+            substitute(linkToText(rmd->getLanguage(),name,FALSE), '{', '.') + "\ncode:\n" + codeFragment,
             tooltip,
             uniqueId,
             0 //distance
@@ -124,17 +134,23 @@ DotCallGraph::DotCallGraph(const MemberDef *md,bool inverse)
   m_scope    = md->getOuterScope();
   QCString uniqueId = getUniqueId(md);
   QCString name;
+  QCString codeFragment;
+  int startLine = md->getStartBodyLine();
+  int endLine   = md->getEndBodyLine();
+  readCodeFragment(md->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
   if (Config_getBool(HIDE_SCOPE_NAMES))
   {
-    name = md->name();
+    name = substitute(md->getFileDef()->relFilePath(), '.', '{') + "#" + md->name();
   }
   else
   {
-    name = md->qualifiedName();
+    name = substitute(md->getFileDef()->relFilePath(), '.', '{') + "#" + md->qualifiedName();
   }
+  name = name + "+" + std::to_string(md->getStartBodyLine()) + ":" + std::to_string(md->getEndBodyLine());
+
   QCString tooltip = md->briefDescriptionAsTooltip();
   m_startNode = new DotNode(this,
-    linkToText(md->getLanguage(),name,FALSE),
+    substitute(linkToText(md->getLanguage(),name,FALSE), '{', '.') + "\ncode:\n" + codeFragment,
     tooltip,
     uniqueId,
     TRUE     // root node

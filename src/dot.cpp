@@ -170,7 +170,7 @@ bool DotManager::run()
     for (auto & dr : m_runners)
     {
       msg("Running dot for graph %zu/%zu\n",prev,numDotRuns);
-      dr.second->run();
+      dr.second->run(); // TODO:
       prev++;
     }
   }

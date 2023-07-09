@@ -196,7 +196,7 @@ static QCString getMscImageMapFromFile(const QCString& inFile, const QCString& /
                                 const QCString& relPath,const QCString& context,
                                 bool writeSVGMap,const QCString &srcFile,int srcLine)
 {
-  QCString outFile = inFile + ".map";
+  QCString outFile = inFile + ".map"; // TODO need consideration 
 
   if (!do_mscgen_generate(inFile,outFile,
                             writeSVGMap ? mscgen_format_svgmap : mscgen_format_pngmap,
