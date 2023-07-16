@@ -322,6 +322,7 @@ void DotGraph::computeGraph(DotNode *root,
     md5stream << "  rankdir=\"" << rank << "\";\n";
   }
   root->clearWriteFlag();
+  // 计算图
   root->write(md5stream, gt, format, gt!=CallGraph && gt!=Dependency, TRUE, backArrows);
   if (renderParents)
   {

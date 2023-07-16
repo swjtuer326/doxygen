@@ -19,7 +19,12 @@
 #include "memberlist.h"
 #include "config.h"
 #include "util.h"
+#include "portable.h"
+#include "message.h"
 
+using json = nlohmann::json;
+
+// 可供后续精简图集使用
 static QCString getUniqueId(const MemberDef *md)
 {
   const MemberDef *def = md->memberDefinition();
@@ -74,13 +79,15 @@ void DotCallGraph::buildGraph(DotNode *n,const MemberDef *md,int distance)
             substitute(linkToText(rmd->getLanguage(),name,FALSE), '{', '.') + "\ncode:\n" + codeFragment,
             tooltip,
             uniqueId,
-            0 //distance
+            0, //distance
+            0,
+            rmd
             );
         n->addChild(bn,EdgeInfo::Blue,EdgeInfo::Solid);
         bn->addParent(n);
         bn->setDistance(distance);
         m_usedNodes.insert(std::make_pair(uniqueId.str(),bn));
-
+        // add a number that is stored as double (note the implicit conversion of j to an object)
         buildGraph(bn,rmd,distance+1);
       }
     }
@@ -130,7 +137,8 @@ void DotCallGraph::determineTruncatedNodes(DotNodeDeque &queue)
 DotCallGraph::DotCallGraph(const MemberDef *md,bool inverse)
 {
   m_inverse = inverse;
-  m_diskName = md->getOutputFileBase()+"_"+md->anchor();
+  m_diskName = md->getOutputFileBase()+"_"+md->anchor(); // 修改dot文件名称
+  
   m_scope    = md->getOuterScope();
   QCString uniqueId = getUniqueId(md);
   QCString name;
@@ -153,7 +161,9 @@ DotCallGraph::DotCallGraph(const MemberDef *md,bool inverse)
     substitute(linkToText(md->getLanguage(),name,FALSE), '{', '.') + "\ncode:\n" + codeFragment,
     tooltip,
     uniqueId,
-    TRUE     // root node
+    TRUE,     // root node
+    0,
+    md
   );
   m_startNode->setDistance(0);
   m_usedNodes.insert(std::make_pair(uniqueId.str(),m_startNode));
@@ -180,6 +190,33 @@ QCString DotCallGraph::getBaseName() const
 
 void DotCallGraph::computeTheGraph()
 {
+  m_json = {{"node_num",0},{"edge_num",0},{"nodes",json::array()},{"edges",json::array()}};
+  std::ofstream f = Portable::openOutputStream(absBaseName()+".json");
+  msg("Patching output file %s\n",qPrint(absBaseName()+".json"));
+  DotNodeRefVector writtenNodes;
+
+  m_startNode->writeJson(m_json,writtenNodes);
+  auto it = writtenNodes.begin();
+  for (;it != writtenNodes.end();++it)
+  {
+    (*it)->resetWritten();
+  }
+
+  m_json["node_num"]=getNextNodeNumber()-1;
+  m_json["edge_num"]=getNextEdgeNumber()-1;
+
+  clearNextEdgeNumber();
+  
+  if (!f.is_open())
+  {
+    err("Could not open file %s for writing\n",qPrint(absBaseName()+".json"));
+  }
+  else
+  {
+    f << std::setw(4) << m_json << std::endl;
+    f.close();
+  }
+
   computeGraph(
     m_startNode,
     CallGraph,

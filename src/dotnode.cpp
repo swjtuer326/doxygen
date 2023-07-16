@@ -23,6 +23,8 @@
 #include "util.h"
 #include "textstream.h"
 
+using json = nlohmann::json;
+
 /** Helper struct holding the properties of a edge in a dot graph. */
 struct EdgeProperties
 {
@@ -296,7 +298,7 @@ static QCString stripProtectionPrefix(const QCString &s)
 }
 
 DotNode::DotNode(DotGraph *graph,const QCString &lab,const QCString &tip, const QCString &url,
-  bool isRoot,const ClassDef *cd)
+  bool isRoot,const ClassDef *cd, const MemberDef *md)
   : m_graph(graph)
   , m_number(graph->getNextNodeNumber())
   , m_label(lab)
@@ -304,6 +306,7 @@ DotNode::DotNode(DotGraph *graph,const QCString &lab,const QCString &tip, const 
   , m_url(url)
   , m_isRoot(isRoot)
   , m_classDef(cd)
+  , m_memberDef(md)
 {
 }
 
@@ -620,6 +623,40 @@ void DotNode::writeArrow(TextStream &t,
 
   t << "];\n";
 }
+
+void DotNode::writeJson(json &j, DotNodeRefVector &writtenNodes)
+{
+  if (m_written) return; // node already written to the output
+  if (!m_visible) return; // node is not visible
+  m_written=TRUE;
+  writtenNodes.push_back(this);
+  QCString codeFragment;
+  int startLine = m_memberDef->getStartBodyLine();
+  int endLine   = m_memberDef->getEndBodyLine();
+  std::string ns = m_memberDef->getOuterScope() == 0 ? "": m_memberDef->getOuterScope()->qualifiedName().str();
+  readCodeFragment(m_memberDef->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
+  j["nodes"].emplace_back(json::object({{"no",m_number},
+                                       {"code_content", codeFragment.str()},
+                                       {"file_path", m_memberDef->getFileDef()->relFilePath().str()},
+                                       {"func_name", m_memberDef->name().str()},
+                                       {"namespace", ns},
+                                       {"start_line", startLine},
+                                       {"end_line", endLine},
+                                       {"line_num", endLine-startLine+1}
+                                       }));
+  for (const auto &cn : m_children)
+  {
+    if (cn->isVisible())
+    {
+      //printf("write arrow %s%s%s\n",qPrint(label()),backArrows?"<-":"->",qPrint(cn->label()));
+      j["edges"].emplace_back(json::object({{"from",m_number},
+                                            {"to",cn->m_number}}));
+      m_graph->getNextEdgeNumber();
+    }
+    cn->writeJson(j, writtenNodes);
+  }
+}
+
 
 void DotNode::write(TextStream &t,
                     GraphType gt,

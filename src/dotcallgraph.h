@@ -17,6 +17,7 @@
 #define DOTCALLGRAPH_H
 
 #include <memory>
+#include <json.hpp>
 
 #include "dotnode.h"
 #include "dotgraph.h"
@@ -51,6 +52,8 @@ class DotCallGraph : public DotGraph
     bool            m_inverse;
     QCString        m_diskName;
     const Definition * m_scope;
+    nlohmann::json  m_json;
+
 };
 
 using DotCallGraphPtr = std::shared_ptr<DotCallGraph>;

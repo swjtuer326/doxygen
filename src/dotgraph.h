@@ -43,6 +43,8 @@ class DotGraph
     int getNextNodeNumber() { return ++m_curNodeNumber; }
     /** returns the edge number. */
     int getNextEdgeNumber() { return ++m_curEdgeNumber; }
+    /** rsset the edge number. */
+    void clearNextEdgeNumber() { m_curEdgeNumber = 0; }
 
     QCString writeGraph(TextStream &t,
                         GraphOutputFormat gf,

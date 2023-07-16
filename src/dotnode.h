@@ -20,6 +20,7 @@
 #include <map>
 #include <deque>
 #include <iostream>
+#include <json.hpp>
 
 #include "types.h"
 #include "dotgraph.h"
@@ -27,6 +28,7 @@
 class ClassDef;
 class DotNode;
 class TextStream;
+class MemberDef;
 
 /** Attributes of an edge of a dot graph */
 class EdgeInfo
@@ -72,7 +74,7 @@ class DotNode
     static void deleteNodes(DotNode* node);
     static QCString convertLabel(const QCString& , bool htmlLike=false);
     DotNode(DotGraph *graph,const QCString &lab,const QCString &tip,const QCString &url,
-        bool rootNode=FALSE,const ClassDef *cd=0);
+        bool rootNode=FALSE,const ClassDef *cd=0, const MemberDef *md=0);
     ~DotNode();
 
     enum TruncState { Unknown, Truncated, Untruncated };
@@ -94,6 +96,7 @@ class DotNode
     void writeXML(TextStream &t,bool isClassGraph) const;
     void writeDocbook(TextStream &t,bool isClassGraph) const;
     void writeDEF(TextStream &t) const;
+    void writeJson(nlohmann::json &j, DotNodeRefVector &writtenNodes);
     void writeLabel(TextStream &t, GraphType gt) const;
     void writeUrl(TextStream &t) const;
     void writeBox(TextStream &t,GraphType gt,GraphOutputFormat f,
@@ -110,6 +113,7 @@ class DotNode
     bool isRenumbered() const      { return m_renumbered; }
     bool hasDocumentation() const  { return m_hasDoc; }
     bool isWritten() const         { return m_written; }
+    void resetWritten()            { m_written=true; }
 
     void clearWriteFlag();
     void renumberNodes(int &number);
@@ -125,7 +129,7 @@ class DotNode
     const DotNodeRefVector &parents() const { return m_parents; }
     const EdgeInfoVector &edgeInfo() const { return m_edgeInfo; }
     DotNode &setNodeId(int number) { m_number=number; return *this; }
-
+ 
   private:
     DotGraph        *m_graph;
     int              m_number;
@@ -145,6 +149,7 @@ class DotNode
     int              m_distance   = 1000;    //!< shortest path to the root node
     bool             m_renumbered = false;   //!< indicates if the node has been renumbered (to prevent endless loops)
     int              m_subgraphId = -1;
+    const MemberDef *m_memberDef;
 };
 
 class DotNodeMap : public std::map<std::string,DotNode*>

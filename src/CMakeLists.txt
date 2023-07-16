@@ -7,6 +7,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/deps/liblodepng
     ${PROJECT_SOURCE_DIR}/deps/libmscgen
     ${PROJECT_SOURCE_DIR}/deps/sqlite3
+    ${PROJECT_SOURCE_DIR}/deps/json
     ${PROJECT_SOURCE_DIR}/libversion
     ${PROJECT_SOURCE_DIR}/libxml
     ${PROJECT_SOURCE_DIR}/vhdlparser
