@@ -12524,17 +12524,17 @@ void generateOutput()
   // generateGroupDocs();
   // g_s.end();
 
-  // g_s.begin("Generating class documentation...\n");
-  // generateClassDocs();
-  // g_s.end();
+  g_s.begin("Generating class documentation...\n");
+  generateClassDocs();
+  g_s.end();
 
-  // g_s.begin("Generating concept documentation...\n");
-  // generateConceptDocs();
-  // g_s.end();
+  g_s.begin("Generating concept documentation...\n");
+  generateConceptDocs();
+  g_s.end();
 
-  // g_s.begin("Generating namespace documentation...\n");
-  // generateNamespaceDocs();
-  // g_s.end();
+  g_s.begin("Generating namespace documentation...\n");
+  generateNamespaceDocs();
+  g_s.end();
 
   if (Config_getBool(GENERATE_LEGEND))
   {

@@ -29,6 +29,8 @@ cmake-build-debug-event-trace/
 /examples/latex/*
 
 test_vnpy/
+test_doxygen/
+test_spring/
 testing/
 
 build/

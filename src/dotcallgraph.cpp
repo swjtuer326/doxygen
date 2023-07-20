@@ -143,8 +143,8 @@ DotCallGraph::DotCallGraph(const MemberDef *md,bool inverse)
   QCString uniqueId = getUniqueId(md);
   QCString name;
   // QCString codeFragment;
-  int startLine = md->getStartBodyLine();
-  int endLine   = md->getEndBodyLine();
+  // int startLine = md->getStartBodyLine();
+  // int endLine   = md->getEndBodyLine();
   // readCodeFragment(md->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
   if (Config_getBool(HIDE_SCOPE_NAMES))
   {
