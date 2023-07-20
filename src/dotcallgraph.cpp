@@ -54,10 +54,10 @@ void DotCallGraph::buildGraph(DotNode *n,const MemberDef *md,int distance)
       else
       {
         QCString name;
-        QCString codeFragment;
+        // QCString codeFragment;
         int startLine = rmd->getStartBodyLine();
         int endLine   = rmd->getEndBodyLine();
-        readCodeFragment(rmd->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
+        // readCodeFragment(rmd->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
 
 
         if (Config_getBool(HIDE_SCOPE_NAMES))
@@ -76,7 +76,7 @@ void DotCallGraph::buildGraph(DotNode *n,const MemberDef *md,int distance)
         QCString tooltip = rmd->briefDescriptionAsTooltip();
         DotNode *bn = new DotNode(
             this,
-            substitute(linkToText(rmd->getLanguage(),name,FALSE), '{', '.') + "\ncode:\n" + codeFragment,
+            substitute(linkToText(rmd->getLanguage(),name,FALSE), '{', '.') ,
             tooltip,
             uniqueId,
             0, //distance
@@ -142,10 +142,10 @@ DotCallGraph::DotCallGraph(const MemberDef *md,bool inverse)
   m_scope    = md->getOuterScope();
   QCString uniqueId = getUniqueId(md);
   QCString name;
-  QCString codeFragment;
+  // QCString codeFragment;
   int startLine = md->getStartBodyLine();
   int endLine   = md->getEndBodyLine();
-  readCodeFragment(md->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
+  // readCodeFragment(md->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
   if (Config_getBool(HIDE_SCOPE_NAMES))
   {
     name = substitute(md->getFileDef()->relFilePath(), '.', '{') + "#" + md->name();
@@ -158,7 +158,7 @@ DotCallGraph::DotCallGraph(const MemberDef *md,bool inverse)
 
   QCString tooltip = md->briefDescriptionAsTooltip();
   m_startNode = new DotNode(this,
-    substitute(linkToText(md->getLanguage(),name,FALSE), '{', '.') + "\ncode:\n" + codeFragment,
+    substitute(linkToText(md->getLanguage(),name,FALSE), '{', '.'),
     tooltip,
     uniqueId,
     TRUE,     // root node
@@ -190,9 +190,9 @@ QCString DotCallGraph::getBaseName() const
 
 void DotCallGraph::computeTheGraph()
 {
-  m_json = {{"node_num",0},{"edge_num",0},{"nodes",json::array()},{"edges",json::array()}};
+  m_json = {{"node_num",0},{"edge_num",0},{"nodes",json::object()},{"edges",json::array()}};
   std::ofstream f = Portable::openOutputStream(absBaseName()+".json");
-  msg("Patching output file %s\n",qPrint(absBaseName()+".json"));
+  msg("Generate output file %s\n",qPrint(absBaseName()+".json"));
   DotNodeRefVector writtenNodes;
 
   m_startNode->writeJson(m_json,writtenNodes);

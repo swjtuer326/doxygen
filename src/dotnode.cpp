@@ -635,7 +635,7 @@ void DotNode::writeJson(json &j, DotNodeRefVector &writtenNodes)
   int endLine   = m_memberDef->getEndBodyLine();
   std::string ns = m_memberDef->getOuterScope() == 0 ? "": m_memberDef->getOuterScope()->qualifiedName().str();
   readCodeFragment(m_memberDef->getFileDef()->absFilePath(), startLine, endLine, codeFragment);
-  j["nodes"].emplace_back(json::object({{"no",m_number},
+  j["nodes"][std::to_string(m_number)] = json::object({{"no",std::to_string(m_number)},
                                        {"code_content", codeFragment.str()},
                                        {"file_path", m_memberDef->getFileDef()->relFilePath().str()},
                                        {"func_name", m_memberDef->name().str()},
@@ -643,7 +643,7 @@ void DotNode::writeJson(json &j, DotNodeRefVector &writtenNodes)
                                        {"start_line", startLine},
                                        {"end_line", endLine},
                                        {"line_num", endLine-startLine+1}
-                                       }));
+                                       });
   for (const auto &cn : m_children)
   {
     if (cn->isVisible())
