@@ -7913,7 +7913,8 @@ static void generateFileSources()
 {
   auto processSourceFile = [](FileDef *fd,OutputList &ol,ClangTUParser *parser)
   {
-    bool showSources  = fd->generateSourceFile() && !Htags::useHtags && !g_useOutputTemplate; // sources need to be shown in the output
+    // bool showSources  = fd->generateSourceFile() && !Htags::useHtags && !g_useOutputTemplate; // sources need to be shown in the output
+    bool showSources = false;
     bool parseSources = !fd->isReference() && Doxygen::parseSourcesNeeded; // we needed to parse the sources even if we do not show them
     if (showSources)
     {
@@ -8459,7 +8460,7 @@ static void generateDocsForClassList(const std::vector<ClassDefMutable*> &classL
         // template instances
         if ( cd->isLinkableInProject() && cd->templateMaster()==0)
         {
-          msg("Generating docs for compound %s...\n",qPrint(cd->name()));
+          msg("Signle Generating docs for compound %s...\n",qPrint(cd->name()));
 
           cd->writeDocumentation(*g_outputList);
           cd->writeMemberList(*g_outputList);
@@ -12516,13 +12517,13 @@ void generateOutput()
   generateFileDocs();
   g_s.end();
 
-  // g_s.begin("Generating page documentation...\n");
-  // generatePageDocs();
-  // g_s.end();
+  g_s.begin("Generating page documentation...\n");
+  generatePageDocs();
+  g_s.end();
 
-  // g_s.begin("Generating group documentation...\n");
-  // generateGroupDocs();
-  // g_s.end();
+  g_s.begin("Generating group documentation...\n");
+  generateGroupDocs();
+  g_s.end();
 
   g_s.begin("Generating class documentation...\n");
   generateClassDocs();
@@ -12543,9 +12544,9 @@ void generateOutput()
     g_s.end();
   }
 
-  g_s.begin("Generating directory documentation...\n");
-  generateDirDocs(*g_outputList);
-  g_s.end();
+  // g_s.begin("Generating directory documentation...\n");
+  // generateDirDocs(*g_outputList);
+  // g_s.end();
 
   if (g_outputList->size()>0)
   {

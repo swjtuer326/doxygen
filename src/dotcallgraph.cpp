@@ -217,6 +217,8 @@ void DotCallGraph::computeTheGraph()
     f.close();
   }
 
+  msg("Generate output file %s Done.\n",qPrint(absBaseName()+".json"));
+
   computeGraph(
     m_startNode,
     CallGraph,
