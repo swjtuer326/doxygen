@@ -11808,12 +11808,14 @@ void parseInput()
   /**************************************************************************
    *            Check/create output directories                             *
    **************************************************************************/
+  
 
   QCString htmlOutput;
   bool generateHtml = Config_getBool(GENERATE_HTML);
   if (generateHtml || g_useOutputTemplate /* TODO: temp hack */)
   {
     htmlOutput = createOutputDirectory(outputDirectory,Config_getString(HTML_OUTPUT),"/html");
+    createOutputDirectory(outputDirectory,QCString(),"/json");
     Config_updateString(HTML_OUTPUT,htmlOutput);
 
     QCString sitemapUrl = Config_getString(SITEMAP_URL);

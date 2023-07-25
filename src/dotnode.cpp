@@ -649,8 +649,8 @@ void DotNode::writeJson(json &j, DotNodeRefVector &writtenNodes)
     if (cn->isVisible())
     {
       //printf("write arrow %s%s%s\n",qPrint(label()),backArrows?"<-":"->",qPrint(cn->label()));
-      j["edges"].emplace_back(json::object({{"from",m_number},
-                                            {"to",cn->m_number}}));
+      j["edges"].emplace_back(json::object({{"from",std::to_string(m_number)},
+                                            {"to",std::to_string(cn->m_number)}}));
       m_graph->getNextEdgeNumber();
     }
     cn->writeJson(j, writtenNodes);

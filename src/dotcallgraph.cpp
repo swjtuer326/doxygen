@@ -190,9 +190,9 @@ QCString DotCallGraph::getBaseName() const
 
 void DotCallGraph::computeTheGraph()
 {
-  m_json = {{"node_num",0},{"edge_num",0},{"nodes",json::object()},{"edges",json::array()}};
-  std::ofstream f = Portable::openOutputStream(absBaseName()+".json");
-  msg("Generate output file %s\n",qPrint(absBaseName()+".json"));
+  m_json = {{"node_num","0"},{"edge_num","0"},{"nodes",json::object()},{"edges",json::array()}};
+  std::ofstream f = Portable::openOutputStream(absJsonName());
+  msg("Generate output file %s\n",qPrint(absJsonName()));
   DotNodeRefVector writtenNodes;
 
   m_startNode->writeJson(m_json,writtenNodes);
